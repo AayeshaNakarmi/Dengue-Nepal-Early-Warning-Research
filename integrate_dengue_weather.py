@@ -10,26 +10,25 @@ from datetime import datetime, timedelta
 import warnings
 warnings.filterwarnings('ignore')
 
-# Configuration
-LAG_WEEKS = [0, 1, 2, 3, 4]  # Create lagged weather variables (current + 1-4 weeks prior)
+# Configuration (no lag features)
 
 def load_data():
     """Load all required data files"""
     print("Loading data files...")
     
     # Load dengue data
-    dengue = pd.read_csv(r'E:\Dengue-Research-Project\data\dengue_data\dengue_long.csv')
+    dengue = pd.read_csv('./data/dengue_data/dengue_long.csv')
     print(f"✓ Loaded dengue data: {dengue.shape}")
     
     # Load temperature data (PART1 and PART2 with MAX and MIN sheets)
     print("\nLoading temperature data...")
-    temp_max_part1 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_part1.xlsx', 
+    temp_max_part1 = pd.read_excel('./data/weather_data/Islington_part1.xlsx', 
                                     sheet_name='Manual Daily Maximum Air Tempe')
-    temp_min_part1 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_part1.xlsx', 
+    temp_min_part1 = pd.read_excel('./data/weather_data/Islington_part1.xlsx', 
                                     sheet_name='Manual Daily Minimum Air Tempe')
-    temp_max_part2 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_part2.xlsx', 
+    temp_max_part2 = pd.read_excel('./data/weather_data/Islington_part2.xlsx', 
                                     sheet_name='Manual Daily Maximum Air Tempe')
-    temp_min_part2 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_part2.xlsx', 
+    temp_min_part2 = pd.read_excel('./data/weather_data/Islington_part2.xlsx', 
                                     sheet_name='Manual Daily Minimum Air Tempe')
     print(f"✓ Loaded temperature MAX PART1: {temp_max_part1.shape}")
     print(f"✓ Loaded temperature MIN PART1: {temp_min_part1.shape}")
@@ -38,24 +37,24 @@ def load_data():
     
     # Load precipitation data
     print("\nLoading precipitation data...")
-    precip_part1 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_part1.xlsx', 
+    precip_part1 = pd.read_excel('./data/weather_data/Islington_part1.xlsx', 
                                   sheet_name='24h accumulated Precipitation ')
-    precip_part2 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_part2.xlsx', 
+    precip_part2 = pd.read_excel('./data/weather_data/Islington_part2.xlsx', 
                                   sheet_name='24h accumulated Precipitation ')
     print(f"✓ Loaded precipitation PART1: {precip_part1.shape}")
     print(f"✓ Loaded precipitation PART2: {precip_part2.shape}")
     
     # Load humidity data (RH_PART1 and RH_PART2)
     print("\nLoading humidity data...")
-    humidity_part1 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_rh_part1.xlsx', 
+    humidity_part1 = pd.read_excel('./data/weather_data/Islington_rh_part1.xlsx', 
                                     sheet_name='Manual Relative Humidity')
-    humidity_part2 = pd.read_excel(r'E:\Dengue-Research-Project\data\weather_data\Islington_rh_part2.xlsx', 
+    humidity_part2 = pd.read_excel('./data/weather_data/Islington_rh_part2.xlsx', 
                                     sheet_name='Manual Relative Humidity')
     print(f"✓ Loaded humidity PART1: {humidity_part1.shape}")
     print(f"✓ Loaded humidity PART2: {humidity_part2.shape}")
     
     # Load station mapping
-    mapping = pd.read_csv(r'E:\Dengue-Research-Project\data\station_district_mapping.csv')
+    mapping = pd.read_csv('./data/station_district_mapping.csv')
     print(f"\n✓ Loaded station mapping: {len(mapping)} districts")
     
     return (dengue, 
@@ -65,8 +64,7 @@ def load_data():
             mapping)
 
 def clean_column_names(df):
-    """Standardize column names by removing extra whitespace only"""
-    # Only strip whitespace - keep the units as they're part of station names
+    """Standardize column names by stripping whitespace"""
     df.columns = df.columns.str.strip()
     return df
 
@@ -230,8 +228,8 @@ def aggregate_weather_to_weekly(weather_df, agg_func='mean'):
     
     return weekly.reset_index()
 
-def create_lagged_features(weather_weekly, mapping, variable_type='temperature'):
-    """Create lagged weather features for each district"""
+def create_weather_features(weather_weekly, mapping, variable_type='temperature'):
+    """Create weather features for each district (current week only, no lags)"""
     results = []
     
     station_col_name = f'{variable_type}_station'
@@ -257,12 +255,7 @@ def create_lagged_features(weather_weekly, mapping, variable_type='temperature')
         
         district_weather = weather_weekly[['year', 'week', station_name]].copy()
         district_weather['district_code'] = district_code
-        district_weather.rename(columns={station_name: f'{variable_type}_lag0'}, inplace=True)
-        
-        # Create lagged features
-        for lag in range(1, max(LAG_WEEKS) + 1):
-            if lag in LAG_WEEKS:
-                district_weather[f'{variable_type}_lag{lag}'] = district_weather[f'{variable_type}_lag0'].shift(lag)
+        district_weather.rename(columns={station_name: variable_type}, inplace=True)
         
         results.append(district_weather)
     
@@ -346,7 +339,7 @@ def integrate_all_data(dengue, temp_weekly, humidity_weekly, precip_weekly):
         integrated = integrated.drop(['year', 'week', 'district_code'], axis=1, errors='ignore')
         print("✓ Merged temperature data")
         # Check merge success
-        temp_filled = integrated['temp_lag0'].notna().sum()
+        temp_filled = integrated['temp'].notna().sum()
         print(f"  {temp_filled}/{len(integrated)} rows have temperature data ({temp_filled/len(integrated)*100:.1f}%)")
     
     # Merge humidity
@@ -361,7 +354,7 @@ def integrate_all_data(dengue, temp_weekly, humidity_weekly, precip_weekly):
         integrated = integrated.drop(['year', 'week', 'district_code'], axis=1, errors='ignore')
         print("✓ Merged humidity data")
         # Check merge success
-        hum_filled = integrated['humidity_lag0'].notna().sum()
+        hum_filled = integrated['humidity'].notna().sum()
         print(f"  {hum_filled}/{len(integrated)} rows have humidity data ({hum_filled/len(integrated)*100:.1f}%)")
     
     # Merge precipitation
@@ -376,12 +369,12 @@ def integrate_all_data(dengue, temp_weekly, humidity_weekly, precip_weekly):
         integrated = integrated.drop(['year', 'week', 'district_code'], axis=1, errors='ignore')
         print("✓ Merged precipitation data")
         # Check merge success
-        precip_filled = integrated['precipitation_lag0'].notna().sum()
+        precip_filled = integrated['precipitation'].notna().sum()
         print(f"  {precip_filled}/{len(integrated)} rows have precipitation data ({precip_filled/len(integrated)*100:.1f}%)")
     
     # Forward fill weather data for missing weeks (use previous week's data)
     print("\n✓ Forward filling missing weather data...")
-    weather_cols = [col for col in integrated.columns if any(x in col for x in ['temp_', 'humidity_', 'precipitation_'])]
+    weather_cols = [col for col in integrated.columns if col in ['temp', 'humidity', 'precipitation']]
     
     for district in integrated['District'].unique():
         district_mask = integrated['District'] == district
@@ -500,16 +493,16 @@ def main():
     print("CREATING LAGGED FEATURES BY DISTRICT")
     print("="*70)
     
-    print("\nCreating temperature features with lags...")
-    temp_weekly = create_lagged_features(temp_weekly_raw, mapping, 'temp')
+    print("\nCreating temperature features...")
+    temp_weekly = create_weather_features(temp_weekly_raw, mapping, 'temp')
     print(f"✓ Temperature features: {temp_weekly.shape}")
     
-    print("\nCreating humidity features with lags...")
-    humidity_weekly = create_lagged_features(humidity_weekly_raw, mapping, 'humidity')
+    print("\nCreating humidity features...")
+    humidity_weekly = create_weather_features(humidity_weekly_raw, mapping, 'humidity')
     print(f"✓ Humidity features: {humidity_weekly.shape}")
     
-    print("\nCreating precipitation features with lags...")
-    precip_weekly = create_lagged_features(precip_weekly_raw, mapping, 'precipitation')
+    print("\nCreating precipitation features...")
+    precip_weekly = create_weather_features(precip_weekly_raw, mapping, 'precipitation')
     print(f"✓ Precipitation features: {precip_weekly.shape}")
     
     # Integrate all data
@@ -526,7 +519,7 @@ def main():
     print("SAVING RESULTS")
     print("="*70)
     
-    output_file = r'E:\Dengue-Research-Project\data\integrated_dengue_weather.csv'
+    output_file = './data/integrated_dengue_weather.csv'
     final_data.to_csv(output_file, index=False)
     print(f"\n✓ Integrated data saved to: {output_file}")
     
@@ -537,7 +530,7 @@ def main():
     numeric_cols = final_data.select_dtypes(include=[np.number]).columns
     
     summary = final_data.groupby('District')[numeric_cols].agg(['count', 'mean', 'std', 'min', 'max']).round(2)
-    summary.to_csv(r'E:\Dengue-Research-Project\data\summary_statistics.csv')
+    summary.to_csv('./data/summary_statistics.csv')
     print("✓ Summary statistics saved to: summary_statistics.csv")
     
     # Display sample of final data
