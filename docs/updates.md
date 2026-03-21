@@ -26,5 +26,5 @@ This document tracks the major updates and technical milestones reached in the N
 - **LAYS**: 0 to 4-week lags generated for all weather features to support predictive modeling.
 
 ## Technical Validation
-- All data consolidations are verified using `validate_consolidation.py`.
-- Comprehensive data integrity audits are performed by `validate_integration_full.py`.
+- All data consolidations are verified using `src/integration/validate_consolidation.py`.
+- Comprehensive data integrity audits are performed by `src/integration/validate_integration_full.py`.

@@ -26,7 +26,7 @@ __pycache__/
 # ================================
 *.log
 *.tmp
-pipeline_progress.json
+src/era5_pipeline/pipeline_progress.json
 
 # ================================
 # OS-specific files

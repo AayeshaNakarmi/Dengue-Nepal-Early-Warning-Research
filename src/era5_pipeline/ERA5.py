@@ -68,7 +68,9 @@ warnings.filterwarnings("ignore")
 # ===================================================================
 
 def load_cds_api_key() -> str | None:
-    load_dotenv(dotenv_path=Path(__file__).parent / ".env")
+    # Look for .env in the project root (2 levels up from src/era5_pipeline/)
+    root_env = Path(__file__).parent.parent.parent / ".env"
+    load_dotenv(dotenv_path=root_env)
     return os.getenv("CDS_API_KEY")
 
 # ===================================================================
@@ -79,11 +81,11 @@ CONFIG = {
     "start_year":          2023,
     "end_year":            2025,
     "nepal_bbox":          [30.5, 80.0, 26.3, 88.2],  # N, W, S, E
-    "shapefile_path":      "npl_admin2.shp",
+    "shapefile_path":      "src/era5_pipeline/npl_admin2.shp",
     "district_col":        "adm2_name",
     "shared_download_dir": "era5_downloads/nepal_shared",
     "base_output_dir":     "weather_data",
-    "progress_file":       "pipeline_progress.json",
+    "progress_file":       "src/era5_pipeline/pipeline_progress.json",
     "master_csv":          "nepal_dengue_weather_daily.csv",
     "variables": [
         "2m_temperature",
