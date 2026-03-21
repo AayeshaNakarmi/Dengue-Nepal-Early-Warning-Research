@@ -26,6 +26,7 @@ __pycache__/
 # ================================
 *.log
 *.tmp
+pipeline_progress.json
 
 # ================================
 # OS-specific files
@@ -33,3 +34,5 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+
+.env

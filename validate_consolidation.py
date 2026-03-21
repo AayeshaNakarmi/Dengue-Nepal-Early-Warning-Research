@@ -21,9 +21,9 @@ def validate():
         print(f"  Integrated (Consolidated): {nawal_integ_sum}")
         
         if nawal_raw_sum == nawal_integ_sum:
-            print("  ✓ Nawalparasi Validation PASSED!")
+            print("  [PASS] Nawalparasi Validation PASSED!")
         else:
-            print("  ✗ Nawalparasi Validation FAILED!")
+            print("  [FAIL] Nawalparasi Validation FAILED!")
             
         # 2. Validate a random district (e.g., Kathmandu)
         ktm_raw_sum = dengue_raw[dengue_raw['District'].str.contains('KATHMANDU', na=False)]['Cases'].sum()
@@ -34,9 +34,9 @@ def validate():
         print(f"  Integrated: {ktm_integ_sum}")
         
         if ktm_raw_sum == ktm_integ_sum:
-            print("  ✓ Kathmandu Validation PASSED!")
+            print("  [PASS] Kathmandu Validation PASSED!")
         else:
-            print("  ✗ Kathmandu Validation FAILED!")
+            print("  [FAIL] Kathmandu Validation FAILED!")
             
         # 3. Check specific Week sample for Nawalparasi
         sample_week_raw = dengue_raw[dengue_raw['District'].str.contains('NAWALPARASI', na=False)].groupby(['Year', 'Week'])['Cases'].sum().iloc[0]
@@ -50,9 +50,9 @@ def validate():
         print(f"  Integrated Value: {sample_integ}")
         
         if sample_week_raw == sample_integ:
-             print("  ✓ Weekly Sample Validation PASSED!")
+             print("  [PASS] Weekly Sample Validation PASSED!")
         else:
-             print("  ✗ Weekly Sample Validation FAILED!")
+             print("  [FAIL] Weekly Sample Validation FAILED!")
 
     except FileNotFoundError as e:
         print(f"Error: {e}")

@@ -64,61 +64,61 @@ def load_data():
     print("Loading data files...")
     
     # Load dengue data
-    dengue = pd.read_csv(r'E:\Dengue-Research-Project\data\dengue_data\dengue_long.csv')
-    print(f"✓ Loaded dengue data: {dengue.shape}")
+    dengue = pd.read_csv('data/dengue_data/dengue_long.csv')
+    print(f"[DONE] Loaded dengue data: {dengue.shape}")
     
     # Load temperature data (PART1 and PART2 with MAX and MIN sheets)
     print("\nLoading temperature data...")
     temp_max_part1 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_part1.xlsx',
+        'data/weather_data/Islington_part1.xlsx',
         sheet_name='Manual Daily Maximum Air Tempe'
     )
     temp_min_part1 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_part1.xlsx',
+        'data/weather_data/Islington_part1.xlsx',
         sheet_name='Manual Daily Minimum Air Tempe'
     )
     temp_max_part2 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_part2.xlsx',
+        'data/weather_data/Islington_part2.xlsx',
         sheet_name='Manual Daily Maximum Air Tempe'
     )
     temp_min_part2 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_part2.xlsx',
+        'data/weather_data/Islington_part2.xlsx',
         sheet_name='Manual Daily Minimum Air Tempe'
     )
-    print(f"✓ Loaded temperature MAX PART1: {temp_max_part1.shape}")
-    print(f"✓ Loaded temperature MIN PART1: {temp_min_part1.shape}")
-    print(f"✓ Loaded temperature MAX PART2: {temp_max_part2.shape}")
-    print(f"✓ Loaded temperature MIN PART2: {temp_min_part2.shape}")
+    print(f"[DONE] Loaded temperature MAX PART1: {temp_max_part1.shape}")
+    print(f"[DONE] Loaded temperature MIN PART1: {temp_min_part1.shape}")
+    print(f"[DONE] Loaded temperature MAX PART2: {temp_max_part2.shape}")
+    print(f"[DONE] Loaded temperature MIN PART2: {temp_min_part2.shape}")
     
     # Load precipitation data
     print("\nLoading precipitation data...")
     precip_part1 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_part1.xlsx',
+        'data/weather_data/Islington_part1.xlsx',
         sheet_name='24h accumulated Precipitation '
     )
     precip_part2 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_part2.xlsx',
+        'data/weather_data/Islington_part2.xlsx',
         sheet_name='24h accumulated Precipitation '
     )
-    print(f"✓ Loaded precipitation PART1: {precip_part1.shape}")
-    print(f"✓ Loaded precipitation PART2: {precip_part2.shape}")
+    print(f"[DONE] Loaded precipitation PART1: {precip_part1.shape}")
+    print(f"[DONE] Loaded precipitation PART2: {precip_part2.shape}")
     
     # Load humidity data (RH_PART1 and RH_PART2)
     print("\nLoading humidity data...")
     humidity_part1 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_rh_part1.xlsx',
+        'data/weather_data/Islington_rh_part1.xlsx',
         sheet_name='Manual Relative Humidity'
     )
     humidity_part2 = pd.read_excel(
-        r'E:\Dengue-Research-Project\data\weather_data\Islington_rh_part2.xlsx',
+        'data/weather_data/Islington_rh_part2.xlsx',
         sheet_name='Manual Relative Humidity'
     )
-    print(f"✓ Loaded humidity PART1: {humidity_part1.shape}")
-    print(f"✓ Loaded humidity PART2: {humidity_part2.shape}")
+    print(f"[DONE] Loaded humidity PART1: {humidity_part1.shape}")
+    print(f"[DONE] Loaded humidity PART2: {humidity_part2.shape}")
     
     # Load station mapping
-    mapping = pd.read_csv(r'E:\Dengue-Research-Project\data\station_district_mapping.csv')
-    print(f"\n✓ Loaded station mapping: {len(mapping)} districts")
+    mapping = pd.read_csv('data/station_district_mapping.csv')
+    print(f"\n[DONE] Loaded station mapping: {len(mapping)} districts")
     
     return (dengue, temp_max_part1, temp_min_part1, temp_max_part2, temp_min_part2,
             precip_part1, precip_part2, humidity_part1, humidity_part2, mapping)
@@ -142,7 +142,7 @@ def parse_weather_dates(df):
             
             parsed_count = df['date'].notna().sum()
             if parsed_count > 0:
-                print(f"✓ Parsed {parsed_count} dates successfully")
+                print(f"[DONE] Parsed {parsed_count} dates successfully")
                 break
         except:
             continue
@@ -246,17 +246,17 @@ def aggregate_weather_to_weekly(weather_df, agg_func='mean', debug=True, mapping
         if len(district_match) > 0:
             DEBUG_STATION = district_match.iloc[0]['temp_station']
             district_code = district_match.iloc[0]['district_code']
-            print(f"✓ Found district: {DEBUG_DISTRICT_NAME}")
+            print(f"[DONE] Found district: {DEBUG_DISTRICT_NAME}")
             print(f"  District code: {district_code}")
             print(f"  Temperature station: {DEBUG_STATION}")
             
             # Check if station exists in weather data
             if DEBUG_STATION not in weather_df.columns:
-                print(f"  ⚠️ WARNING: Station '{DEBUG_STATION}' not found in weather data!")
+                print(f"  [WARNING] WARNING: Station '{DEBUG_STATION}' not found in weather data!")
                 print(f"  Available stations: {[col for col in weather_df.columns if col != 'date'][:5]}...")
                 DEBUG_STATION = None
         else:
-            print(f"  ⚠️ WARNING: District '{DEBUG_DISTRICT_NAME}' not found in mapping!")
+            print(f"  [WARNING] WARNING: District '{DEBUG_DISTRICT_NAME}' not found in mapping!")
             print(f"  Available districts: {mapping['district_name'].unique()[:5].tolist()}...")
             DEBUG_STATION = None
     
@@ -301,7 +301,7 @@ def aggregate_weather_to_weekly(weather_df, agg_func='mean', debug=True, mapping
             prev_first_sunday = prev_jan_1 + pd.Timedelta(days=prev_days_until_sunday)
             
             if debug and idx < 14:
-                print(f"  ⚠️  Date is BEFORE first Sunday of {year}")
+                print(f"  [WARNING]  Date is BEFORE first Sunday of {year}")
                 print(f"  Checking previous year ({prev_year}):")
                 print(f"    January 1, {prev_year}: {prev_jan_1.strftime('%Y-%m-%d (%A)')}")
                 print(f"    First Sunday of {prev_year}: {prev_first_sunday.strftime('%Y-%m-%d (%A)')}")
@@ -323,7 +323,7 @@ def aggregate_weather_to_weekly(weather_df, agg_func='mean', debug=True, mapping
             year_for_week = prev_year
             
             if debug and idx < 14:
-                print(f"  ✓ RESULT: Year {year_for_week}, Week {week_num}")
+                print(f"  [DONE] RESULT: Year {year_for_week}, Week {week_num}")
         else:
             # Calculate week number from first Sunday
             days_since_first_sunday = (date_idx - first_sunday).days
@@ -333,7 +333,7 @@ def aggregate_weather_to_weekly(weather_df, agg_func='mean', debug=True, mapping
             if debug and idx < 14:
                 print(f"  Days since first Sunday: {days_since_first_sunday}")
                 print(f"  Week number: {days_since_first_sunday} ÷ 7 = {days_since_first_sunday // 7}, +1 = {week_num}")
-                print(f"  ✓ RESULT: Year {year_for_week}, Week {week_num}")
+                print(f"  [DONE] RESULT: Year {year_for_week}, Week {week_num}")
         
         week_assignments.append((year_for_week, week_num))
     
@@ -370,7 +370,7 @@ def aggregate_weather_to_weekly(weather_df, agg_func='mean', debug=True, mapping
                             print(f"  {DEBUG_STATION} values: {[round(v, 2) for v in values.tolist()]}")
                             print(f"  Mean: ({' + '.join([str(round(v, 2)) for v in values])}) ÷ {len(values)} = {result:.2f}")
                     else:
-                        print(f"  ⚠️ No data available for {DEBUG_STATION}")
+                        print(f"  [WARNING] No data available for {DEBUG_STATION}")
         
         print(f"\n{'='*80}\n")
     
@@ -470,8 +470,8 @@ def create_complete_dengue_frame(dengue, start_year=2019, end_year=2024):
     # Fill missing cases with 0
     complete_frame['Cases'] = complete_frame['Cases'].fillna(0)
     
-    print(f"✓ Created {len(complete_frame)} records ({len(districts)} districts × {(end_year-start_year+1)*52} weeks)")
-    print(f"✓ Filled {(complete_frame['Cases'] == 0).sum()} weeks with 0 cases")
+    print(f"[DONE] Created {len(complete_frame)} records ({len(districts)} districts × {(end_year-start_year+1)*52} weeks)")
+    print(f"[DONE] Filled {(complete_frame['Cases'] == 0).sum()} weeks with 0 cases")
     
     return complete_frame
 
@@ -484,14 +484,14 @@ def integrate_all_data(dengue, temp_weekly, temp_max_weekly, temp_min_weekly, hu
     
     # Fill missing Cases with 0 (weeks with no reported cases)
     integrated['Cases'] = integrated['Cases'].fillna(0)
-    print(f"✓ Filled missing dengue cases with 0")
+    print(f"[DONE] Filled missing dengue cases with 0")
     
     # Extract district code NO LONGER NEEDED if we use standardized names
     # But wait, create_complete_dengue_frame uses 'District' which we already standardized to names.
     # We need a way to link 'District' (Names) back to weather data which uses codes or station names in mapping.
     
     # Let's add district_name to the merge
-    print(f"✓ Standardized names in integrated data")
+    print(f"[DONE] Standardized names in integrated data")
     
     # Standardize district names in weather data
     if not temp_weekly.empty:
@@ -514,7 +514,7 @@ def integrate_all_data(dengue, temp_weekly, temp_max_weekly, temp_min_weekly, hu
             how='left'
         )
         integrated = integrated.drop(['year', 'week', 'district_name'], axis=1, errors='ignore')
-        print("✓ Merged temperature (mean) data")
+        print("[DONE] Merged temperature (mean) data")
         
         temp_filled = integrated['temp_lag0'].notna().sum()
         print(f"  {temp_filled}/{len(integrated)} rows have temperature data ({temp_filled/len(integrated)*100:.1f}%)")
@@ -528,7 +528,7 @@ def integrate_all_data(dengue, temp_weekly, temp_max_weekly, temp_min_weekly, hu
             how='left'
         )
         integrated = integrated.drop(['year', 'week', 'district_name'], axis=1, errors='ignore')
-        print("✓ Merged temperature (max) data")
+        print("[DONE] Merged temperature (max) data")
         
         temp_max_filled = integrated['temp_max_lag0'].notna().sum()
         print(f"  {temp_max_filled}/{len(integrated)} rows have temperature MAX data ({temp_max_filled/len(integrated)*100:.1f}%)")
@@ -542,7 +542,7 @@ def integrate_all_data(dengue, temp_weekly, temp_max_weekly, temp_min_weekly, hu
             how='left'
         )
         integrated = integrated.drop(['year', 'week', 'district_name'], axis=1, errors='ignore')
-        print("✓ Merged temperature (min) data")
+        print("[DONE] Merged temperature (min) data")
         
         temp_min_filled = integrated['temp_min_lag0'].notna().sum()
         print(f"  {temp_min_filled}/{len(integrated)} rows have temperature MIN data ({temp_min_filled/len(integrated)*100:.1f}%)")
@@ -557,7 +557,7 @@ def integrate_all_data(dengue, temp_weekly, temp_max_weekly, temp_min_weekly, hu
             suffixes=('', '_hum')
         )
         integrated = integrated.drop(['year', 'week', 'district_name'], axis=1, errors='ignore')
-        print("✓ Merged humidity data")
+        print("[DONE] Merged humidity data")
         
         hum_filled = integrated['humidity_lag0'].notna().sum()
         print(f"  {hum_filled}/{len(integrated)} rows have humidity data ({hum_filled/len(integrated)*100:.1f}%)")
@@ -572,13 +572,13 @@ def integrate_all_data(dengue, temp_weekly, temp_max_weekly, temp_min_weekly, hu
             suffixes=('', '_precip')
         )
         integrated = integrated.drop(['year', 'week', 'district_name'], axis=1, errors='ignore')
-        print("✓ Merged precipitation data")
+        print("[DONE] Merged precipitation data")
         
         precip_filled = integrated['precipitation_lag0'].notna().sum()
         print(f"  {precip_filled}/{len(integrated)} rows have precipitation data ({precip_filled/len(integrated)*100:.1f}%)")
     
     # Forward fill weather data
-    print("\n✓ Forward filling missing weather data...")
+    print("\n[DONE] Forward filling missing weather data...")
     weather_cols = [col for col in integrated.columns 
                    if any(x in col for x in ['temp_', 'humidity_', 'precipitation_'])]
     
@@ -627,7 +627,7 @@ def calculate_data_completeness(df):
         missing_df = missing_df.sort_values('Missing', ascending=False)
         print(missing_df.to_string(index=False))
     else:
-        print("No missing data found! ✓")
+        print("No missing data found! [DONE]")
     
     print("\n" + "="*70)
 
@@ -652,7 +652,7 @@ def main():
     # Standardize district names in dengue data BEFORE creating complete frame
     print("\nStandardizing district names in dengue data...")
     dengue = standardize_district_names(dengue, 'District')
-    print(f"✓ Standardized dengue district names. Unique districts: {dengue['District'].nunique()}")
+    print(f"[DONE] Standardized dengue district names. Unique districts: {dengue['District'].nunique()}")
     
     # Standardize district names in mapping BEFORE using it
     print("\nStandardizing district names in station mapping...")
@@ -661,7 +661,7 @@ def main():
     mapping['district_name'] = mapping['district_name'].astype(str).str.strip().str.title()
     # Remove duplicates in mapping caused by Nawalparasi merge
     mapping = mapping.drop_duplicates(subset=['district_name'])
-    print(f"✓ Standardized mapping names. Unique districts: {mapping['district_name'].nunique()}")
+    print(f"[DONE] Standardized mapping names. Unique districts: {mapping['district_name'].nunique()}")
 
     dengue_complete = create_complete_dengue_frame(dengue, start_year=min_year, end_year=max_year)
     
@@ -672,23 +672,23 @@ def main():
     
     print("\nCombining temperature MAX...")
     temp_max = combine_parts(temp_max_p1, temp_max_p2)
-    print(f"✓ Combined temperature MAX: {temp_max.shape}")
+    print(f"[DONE] Combined temperature MAX: {temp_max.shape}")
     
     print("\nCombining temperature MIN...")
     temp_min = combine_parts(temp_min_p1, temp_min_p2)
-    print(f"✓ Combined temperature MIN: {temp_min.shape}")
+    print(f"[DONE] Combined temperature MIN: {temp_min.shape}")
     
     print("\nCalculating mean temperature...")
     temp_mean = calculate_mean_temperature(temp_max, temp_min)
-    print(f"✓ Calculated mean temperature: {temp_mean.shape}")
+    print(f"[DONE] Calculated mean temperature: {temp_mean.shape}")
     
     print("\nCombining precipitation...")
     precip = combine_parts(precip_p1, precip_p2)
-    print(f"✓ Combined precipitation: {precip.shape}")
+    print(f"[DONE] Combined precipitation: {precip.shape}")
     
     print("\nCombining humidity...")
     humidity = combine_parts(humidity_p1, humidity_p2)
-    print(f"✓ Combined humidity: {humidity.shape}")
+    print(f"[DONE] Combined humidity: {humidity.shape}")
     
     # Aggregate to weekly WITH DEBUG FOR FIRST VARIABLE
     print("\n" + "="*70)
@@ -697,23 +697,23 @@ def main():
     
     print("\nAggregating temperature (mean) WITH DEBUG...")
     temp_weekly_raw = aggregate_weather_to_weekly(temp_mean, 'mean', debug=True, mapping=mapping)
-    print(f"✓ Weekly temperature (mean): {temp_weekly_raw.shape}")
+    print(f"[DONE] Weekly temperature (mean): {temp_weekly_raw.shape}")
     
     print("\nAggregating temperature MAX...")
     temp_max_weekly_raw = aggregate_weather_to_weekly(temp_max, 'mean', debug=False, mapping=None)
-    print(f"✓ Weekly temperature (max): {temp_max_weekly_raw.shape}")
+    print(f"[DONE] Weekly temperature (max): {temp_max_weekly_raw.shape}")
     
     print("\nAggregating temperature MIN...")
     temp_min_weekly_raw = aggregate_weather_to_weekly(temp_min, 'mean', debug=False, mapping=None)
-    print(f"✓ Weekly temperature (min): {temp_min_weekly_raw.shape}")
+    print(f"[DONE] Weekly temperature (min): {temp_min_weekly_raw.shape}")
     
     print("\nAggregating humidity (mean)...")
     humidity_weekly_raw = aggregate_weather_to_weekly(humidity, 'mean', debug=False, mapping=None)
-    print(f"✓ Weekly humidity: {humidity_weekly_raw.shape}")
+    print(f"[DONE] Weekly humidity: {humidity_weekly_raw.shape}")
     
     print("\nAggregating precipitation (sum)...")
     precip_weekly_raw = aggregate_weather_to_weekly(precip, 'sum', debug=False, mapping=None)
-    print(f"✓ Weekly precipitation: {precip_weekly_raw.shape}")
+    print(f"[DONE] Weekly precipitation: {precip_weekly_raw.shape}")
     
     # Create district-level lagged features
     print("\n" + "="*70)
@@ -722,23 +722,23 @@ def main():
     
     print("\nCreating temperature features with lags...")
     temp_weekly = create_lagged_features(temp_weekly_raw, mapping, 'temp')
-    print(f"✓ Temperature (mean) features: {temp_weekly.shape}")
+    print(f"[DONE] Temperature (mean) features: {temp_weekly.shape}")
     
     print("\nCreating temperature MAX features with lags...")
     temp_max_weekly = create_lagged_features(temp_max_weekly_raw, mapping, 'temp_max')
-    print(f"✓ Temperature (max) features: {temp_max_weekly.shape}")
+    print(f"[DONE] Temperature (max) features: {temp_max_weekly.shape}")
     
     print("\nCreating temperature MIN features with lags...")
     temp_min_weekly = create_lagged_features(temp_min_weekly_raw, mapping, 'temp_min')
-    print(f"✓ Temperature (min) features: {temp_min_weekly.shape}")
+    print(f"[DONE] Temperature (min) features: {temp_min_weekly.shape}")
     
     print("\nCreating humidity features with lags...")
     humidity_weekly = create_lagged_features(humidity_weekly_raw, mapping, 'humidity')
-    print(f"✓ Humidity features: {humidity_weekly.shape}")
+    print(f"[DONE] Humidity features: {humidity_weekly.shape}")
     
     print("\nCreating precipitation features with lags...")
     precip_weekly = create_lagged_features(precip_weekly_raw, mapping, 'precipitation')
-    print(f"✓ Precipitation features: {precip_weekly.shape}")
+    print(f"[DONE] Precipitation features: {precip_weekly.shape}")
     
     # Integrate all data
     print("\n" + "="*70)
@@ -756,16 +756,16 @@ def main():
     print("SAVING RESULTS")
     print("="*70)
     
-    output_file = r'E:\Dengue-Research-Project\data\integrated_dengue_weather.csv'
+    output_file = 'data/integrated_dengue_weather.csv'
     final_data.to_csv(output_file, index=False)
-    print(f"\n✓ Integrated data saved to: {output_file}")
+    print(f"\n[DONE] Integrated data saved to: {output_file}")
     
     # Create summary statistics
     print("\nCreating summary statistics...")
     numeric_cols = final_data.select_dtypes(include=[np.number]).columns
     summary = final_data.groupby('District')[numeric_cols].agg(['count', 'mean', 'std', 'min', 'max']).round(2)
-    summary.to_csv(r'E:\Dengue-Research-Project\data\summary_statistics.csv')
-    print("✓ Summary statistics saved to: summary_statistics.csv")
+    summary.to_csv('data/summary_statistics.csv')
+    print("[DONE] Summary statistics saved to: data/summary_statistics.csv")
     
     # Display sample
     print("\n" + "="*70)
@@ -775,7 +775,7 @@ def main():
     print(final_data.head(5).to_string())
     
     print("\n" + "="*70)
-    print("INTEGRATION COMPLETE! ✓")
+    print("INTEGRATION COMPLETE! [DONE]")
     print("="*70)
     print(f"\nFinal dataset:")
     print(f"  • Shape: {final_data.shape[0]:,} rows × {final_data.shape[1]} columns")
